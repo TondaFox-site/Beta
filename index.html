@@ -1,69 +1,1453 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Beta Verze</title>
-    <style>
-        html, body {
-            background-color: #1a1a1a;
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-        }
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
-        .obsah {
-            width: 90%;
-            max-width: 500px;
-            box-sizing: border-box;
-        }
-        h1 {
-            color: #00adb5;
-            font-size: 4rem; /* Extrémně velké písmo */
-            margin: 0 0 20px 0;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-        .popis {
-            color: #3498db;
-            font-size: 1.8rem; /* Dobře čitelný text */
-            line-height: 1.5;
-            margin: 0 0 40px 0;
-        }
-        .status-zadna {
-            background: #2d2d2d;
-            padding: 20px 30px;
-            border-radius: 12px;
-            border-left: 6px solid #e74c3c; /* Červený proužek značící "nic tu není" */
-            display: block;
-            margin: 0 auto;
-            font-size: 1.6rem;
-            color: #f5f5f5;
-            font-weight: bold;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>Unga Bunga Beta verze Firebase</title>
+
+<p>přihlašovaní se ukládá na serveru </p>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<style>
+
+*{
+box-sizing:border-box;
+}
+
+body{
+margin:0;
+font-family:Arial;
+background:#0f172a;
+color:white;
+transition:0.3s;
+}
+
+body.light{
+background:#f1f5f9;
+color:black;
+}
+
+.container{
+max-width:1200px;
+margin:auto;
+padding:20px;
+}
+
+.card{
+background:#1e293b;
+padding:20px;
+border-radius:20px;
+margin-top:20px;
+}
+
+body.light .card{
+background:white;
+}
+
+input,
+textarea,
+select,
+button{
+width:100%;
+padding:12px;
+margin-top:10px;
+border:none;
+border-radius:12px;
+font-size:16px;
+}
+
+button{
+background:#2563eb;
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
+
+.hidden{
+display:none;
+}
+
+.menu{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin-top:20px;
+}
+
+.menu button{
+flex:1;
+min-width:120px;
+}
+
+.news{
+background:#334155;
+padding:15px;
+border-radius:15px;
+margin-top:10px;
+}
+
+body.light .news{
+background:#cbd5e1;
+}
+
+.chat{
+height:300px;
+overflow:auto;
+background:#0f172a;
+padding:10px;
+border-radius:12px;
+margin-top:10px;
+}
+
+.msg{
+background:#334155;
+padding:10px;
+border-radius:12px;
+margin-top:10px;
+}
+
+.profile{
+display:flex;
+gap:15px;
+align-items:center;
+}
+
+.avatar{
+font-size:50px;
+}
+
+.qr{
+background:white;
+padding:20px;
+border-radius:20px;
+margin-top:20px;
+display:flex;
+justify-content:center;
+}
+
+.badge{
+display:inline-block;
+padding:5px 10px;
+border-radius:10px;
+background:#ef4444;
+font-size:12px;
+margin-left:5px;
+}
+
+.anim{
+position:absolute;
+font-size:30px;
+color:#22c55e;
+animation:up 1s forwards;
+}
+
+@keyframes up{
+
+0%{
+opacity:1;
+transform:translateY(0);
+}
+
+100%{
+opacity:0;
+transform:translateY(-50px);
+}
+
+}
+
+</style>
 </head>
+
 <body>
 
-    <div class="obsah">
-        <h1>BETA VERZE</h1>
-        
-        <p class="popis">
-            Na této stránce se budou ukazovat budoucí stránky nebo aktualizace našich stránek.
-        </p>
-        
-        <div class="status-zadna">
-            Zatím žádná beta verze
-        </div>
-    </div>
+<div class="container">
+
+<!-- LOGIN -->
+
+<div id="loginPage">
+
+<div class="card">
+
+<h1>Unga Bunga V2</h1>
+
+<input id="loginEmail"
+placeholder="Email">
+
+<input id="loginPass"
+type="password"
+placeholder="Heslo">
+
+<button onclick="login()">
+Přihlásit
+</button>
+
+<button onclick="register()">
+Registrovat
+</button>
+
+<button onclick="showFlopik()">
+Přihlásit přes Můj Flopík
+</button>
+
+</div>
+
+</div>
+
+<!-- FLOPIK -->
+
+<div id="flopikPage"
+class="hidden">
+
+<div class="card">
+
+<h2>Můj Flopík</h2>
+
+<div id="flopikAccounts"></div>
+
+<input id="flopUser"
+placeholder="Email">
+
+<input id="flopPass"
+type="password"
+placeholder="Heslo">
+
+<button onclick="flopikLogin()">
+Přihlásit
+</button>
+
+<button onclick="backLogin()">
+Zpět
+</button>
+
+</div>
+
+</div>
+
+<!-- APP -->
+
+<div id="appPage"
+class="hidden">
+
+<div class="card">
+
+<div class="profile">
+
+<div class="avatar"
+id="avatar">
+<i class="fa-solid fa-user"></i>
+</div>
+
+<div>
+
+<h2 id="welcome"></h2>
+
+<div id="role"></div>
+
+<div id="level"></div>
+
+</div>
+
+</div>
+
+<div class="menu">
+
+<button onclick="tab('dashboard')">
+Dashboard
+</button>
+
+<button onclick="tab('bank')">
+Banka
+</button>
+
+<button onclick="tab('chatTab')">
+Chat
+</button>
+
+<button onclick="tab('profileTab')">
+Profil
+</button>
+
+<button onclick="tab('settingsTab')">
+Nastavení
+</button>
+
+<button id="adminBtn"
+class="hidden"
+onclick="tab('adminTab')">
+Admin
+</button>
+
+<button onclick="logout()">
+Odhlásit
+</button>
+
+</div>
+
+</div>
+
+<!-- DASHBOARD -->
+
+<div class="card tab"
+id="dashboard">
+
+<h2>Dashboard</h2>
+
+<h1 id="money"></h1>
+
+<div id="animBox"></div>
+
+<div class="news">
+Počet uživatelů:
+<span id="usersCount"></span>
+</div>
+
+<div class="news">
+Online chat:
+Firebase Realtime
+</div>
+
+</div>
+
+<!-- BANK -->
+
+<div class="card tab hidden"
+id="bank">
+
+<h2>Banka</h2>
+
+<select id="payType">
+
+<option value="qr">
+QR platba
+</option>
+
+<option value="bluetooth">
+Bluetooth
+</option>
+
+<option value="server">
+Server
+</option>
+
+</select>
+
+<input id="payUser"
+placeholder="Komu email">
+
+<input id="payAmount"
+type="number"
+placeholder="Částka">
+
+<button onclick="pay()">
+Zaplatit
+</button>
+
+<button onclick="scanBluetooth()">
+Bluetooth hledání
+</button>
+
+<button onclick="startQR()">
+QR kamera demo
+</button>
+
+<div id="qrBox"
+class="qr hidden"></div>
+
+<div id="history"></div>
+
+</div>
+
+<!-- CHAT -->
+
+<div class="card tab hidden"
+id="chatTab">
+
+<h2>Chat</h2>
+
+<div class="menu">
+
+<button onclick="openChat('global')">
+Globální chat
+</button>
+
+<button onclick="openChat('private')">
+Soukromé zprávy
+</button>
+
+<button onclick="openChat('groups')">
+Skupiny
+</button>
+
+<button onclick="openChat('polls')">
+Ankety
+</button>
+
+</div>
+
+<div id="chatSection">
+
+<div class="chat"
+id="chat"></div>
+
+<input id="chatInput"
+placeholder="Zpráva">
+
+<button onclick="sendChat()">
+Poslat
+</button>
+
+</div>
+
+</div>
+
+<!-- PROFILE -->
+
+<div class="card tab hidden"
+id="profileTab">
+
+<h2>Profil</h2>
+
+<select onchange="changeAvatar(this.value)">
+
+<option value="fa-user">
+Uživatel
+</option>
+
+<option value="fa-crown">
+Koruna
+</option>
+
+<option value="fa-rocket">
+Raketa
+</option>
+
+<option value="fa-ghost">
+Duch
+</option>
+
+</select>
+
+<textarea id="bio"
+placeholder="Veřejný popis"></textarea>
+
+<select id="statusSelect">
+
+<option value="online">
+Online
+</option>
+
+<option value="ve škole">
+Ve škole
+</option>
+
+<option value="nerušit">
+Nerušit
+</option>
+
+</select>
+
+<button onclick="saveProfile()">
+Uložit profil
+</button>
+
+<div class="news"
+id="profileInfo"></div>
+
+</div>
+
+<!-- SETTINGS -->
+
+<div class="card tab hidden"
+id="settingsTab">
+
+<h2>Nastavení</h2>
+
+<button onclick="toggleTheme()">
+Tmavý / světlý režim
+</button>
+
+<input id="newPassword"
+type="password"
+placeholder="Nové heslo">
+
+<button onclick="changePassword()">
+Změnit heslo
+</button>
+
+</div>
+
+<!-- ADMIN -->
+
+<div class="card tab hidden"
+id="adminTab">
+
+<h2>Admin panel</h2>
+
+<input id="newUserEmail"
+placeholder="Email">
+
+<input id="newUserPass"
+placeholder="Heslo">
+
+<select id="newUserRole">
+
+<option value="user">
+User
+</option>
+
+<option value="admin">
+Admin
+</option>
+
+</select>
+
+<button onclick="createUserAdmin()">
+Vytvořit účet
+</button>
+
+<div id="users"></div>
+
+</div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+set,
+get,
+push,
+update,
+remove,
+onValue
+}
+from "https://www.gstatic.com/firebasejs/12.13.0/firebase-database.js";
+
+import {
+getAuth,
+createUserWithEmailAndPassword,
+signInWithEmailAndPassword,
+signOut,
+onAuthStateChanged,
+updatePassword
+}
+from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyB-kVC8nGY1JEFEV79Yexpg8-etJDXIp68",
+
+authDomain: "muj-flopik.firebaseapp.com",
+
+databaseURL: "https://muj-flopik-default-rtdb.europe-west1.firebasedatabase.app",
+
+projectId: "muj-flopik",
+
+storageBucket: "muj-flopik.firebasestorage.app",
+
+messagingSenderId: "198721412738",
+
+appId: "1:198721412738:web:a3644bda03f4bc682d5e9b",
+
+measurementId: "G-H3M6CCVL5R"
+
+};
+
+const app = initializeApp(firebaseConfig);
+
+const db = getDatabase(app);
+
+const auth = getAuth(app);
+
+let currentUser = null;
+
+let currentUID = null;
+
+window.login = login;
+window.register = register;
+window.logout = logout;
+window.tab = tab;
+window.sendChat = sendChat;
+window.pay = pay;
+window.scanBluetooth = scanBluetooth;
+window.startQR = startQR;
+window.changeAvatar = changeAvatar;
+window.saveProfile = saveProfile;
+window.toggleTheme = toggleTheme;
+window.showFlopik = showFlopik;
+window.backLogin = backLogin;
+window.flopikLogin = flopikLogin;
+window.openChat = openChat;
+window.changePassword = changePassword;
+window.createUserAdmin = createUserAdmin;
+
+/* LOGIN */
+
+async function login(){
+
+let email =
+loginEmail.value;
+
+let pass =
+loginPass.value;
+
+try{
+
+await signInWithEmailAndPassword(
+auth,
+email,
+pass
+);
+
+}catch(e){
+
+alert("Špatné přihlášení");
+
+}
+
+}
+
+/* REGISTER */
+
+async function register(){
+
+let email =
+loginEmail.value;
+
+let pass =
+loginPass.value;
+
+try{
+
+let user =
+await createUserWithEmailAndPassword(
+auth,
+email,
+pass
+);
+
+await set(
+ref(db,"users/"+user.user.uid),
+{
+email:email,
+role:"user",
+money:1000,
+xp:0,
+level:1,
+avatar:"fa-user",
+bio:"",
+status:"online",
+verified:false,
+banned:false,
+muted:false,
+registered:new Date().toLocaleDateString()
+}
+);
+
+alert("Účet vytvořen");
+
+}catch(e){
+
+alert(e.message);
+
+}
+
+}
+
+/* AUTH STATE */
+
+onAuthStateChanged(auth,async(user)=>{
+
+if(!user){
+
+loginPage.classList.remove("hidden");
+
+appPage.classList.add("hidden");
+
+return;
+}
+
+currentUID = user.uid;
+
+let snap =
+await get(
+ref(db,"users/"+user.uid)
+);
+
+currentUser = snap.val();
+
+openApp();
+
+});
+function openApp(){
+
+loginPage.classList.add("hidden");
+
+flopikPage.classList.add("hidden");
+
+appPage.classList.remove("hidden");
+
+welcome.innerHTML =
+
+currentUser.email +
+
+(currentUser.verified
+? ' <span class="badge">✓</span>'
+: '');
+
+money.innerHTML =
+currentUser.money + " Hungů";
+
+level.innerHTML =
+
+"Level " +
+currentUser.level +
+" | XP " +
+currentUser.xp;
+
+avatar.innerHTML =
+
+`<i class="fa-solid ${currentUser.avatar}"></i>`;
+
+role.innerHTML =
+
+currentUser.role==="admin"
+
+? '<span style="color:#ef4444;font-weight:bold;">ADMIN</span>'
+
+: '<span style="color:#38bdf8;">USER</span>';
+
+bio.value =
+currentUser.bio || "";
+
+statusSelect.value =
+currentUser.status || "online";
+
+profileInfo.innerHTML =
+
+`
+Status:
+${currentUser.status}
+
+<br><br>
+
+Registrace:
+${currentUser.registered}
+`;
+
+if(currentUser.role==="admin"){
+
+adminBtn.classList.remove("hidden");
+
+}else{
+
+adminBtn.classList.add("hidden");
+
+}
+
+loadUsers();
+
+loadChat();
+
+loadHistory();
+
+}
+
+/* LOGOUT */
+
+async function logout(){
+
+await signOut(auth);
+
+}
+
+/* TABS */
+
+function tab(id){
+
+document
+.querySelectorAll(".tab")
+.forEach(t=>{
+
+t.classList.add("hidden");
+
+});
+
+document
+.getElementById(id)
+.classList.remove("hidden");
+
+}
+
+/* CHAT */
+
+function openChat(type){
+
+alert(type);
+
+}
+
+async function sendChat(){
+
+if(currentUser.muted){
+
+alert("Jsi umlčen");
+
+return;
+}
+
+if(chatInput.value.trim()===""){
+return;
+}
+
+await push(
+ref(db,"chat"),
+{
+user:currentUser.email,
+text:chatInput.value,
+time:new Date().toLocaleTimeString(),
+uid:currentUID
+}
+);
+
+chatInput.value="";
+
+}
+
+/* LOAD CHAT */
+
+function loadChat(){
+
+onValue(
+ref(db,"chat"),
+(snapshot)=>{
+
+chat.innerHTML="";
+
+let data =
+snapshot.val();
+
+if(!data) return;
+
+Object.entries(data).forEach(([id,msg])=>{
+
+chat.innerHTML += `
+
+<div class="msg">
+
+<b>${msg.user}</b>
+
+<br>
+
+${msg.text}
+
+<br>
+
+<small>${msg.time}</small>
+
+${
+currentUser.role==="admin"
+
+?
+
+`<br>
+<button
+onclick="deleteMessage('${id}')">
+Smazat
+</button>`
+
+:
+
+""
+}
+
+</div>
+
+`;
+
+});
+
+}
+);
+
+}
+
+/* DELETE MESSAGE */
+
+window.deleteMessage =
+async function(id){
+
+await remove(
+ref(db,"chat/"+id)
+);
+
+};
+
+/* PAY */
+
+async function pay(){
+
+let targetEmail =
+payUser.value;
+
+let amount =
+Number(payAmount.value);
+
+if(amount<=0){
+
+alert("Neplatná částka");
+
+return;
+}
+
+if(currentUser.money < amount){
+
+alert("Nedostatek Hungů");
+
+return;
+}
+
+let usersSnap =
+await get(ref(db,"users"));
+
+let users =
+usersSnap.val();
+
+let targetUID = null;
+
+Object.entries(users).forEach(([uid,u])=>{
+
+if(u.email===targetEmail){
+
+targetUID = uid;
+
+}
+
+});
+
+if(!targetUID){
+
+alert("Uživatel neexistuje");
+
+return;
+}
+
+let target =
+users[targetUID];
+
+await update(
+ref(db,"users/"+currentUID),
+{
+money:
+currentUser.money - amount
+}
+);
+
+await update(
+ref(db,"users/"+targetUID),
+{
+money:
+target.money + amount
+}
+);
+
+await push(
+ref(db,"transactions"),
+{
+from:currentUser.email,
+to:target.email,
+amount:amount,
+type:payType.value,
+time:new Date().toLocaleString()
+}
+);
+
+animate(amount);
+
+if(payType.value==="qr"){
+
+qrBox.classList.remove("hidden");
+
+qrBox.innerHTML="";
+
+new QRCode(qrBox,{
+text:
+target.email+
+":"+
+amount,
+width:200,
+height:200
+});
+
+}
+
+alert("Platba odeslána");
+
+}
+
+/* HISTORY */
+
+function loadHistory(){
+
+onValue(
+ref(db,"transactions"),
+(snapshot)=>{
+
+history.innerHTML="";
+
+let data =
+snapshot.val();
+
+if(!data) return;
+
+Object.values(data).forEach(t=>{
+
+if(
+t.from===currentUser.email ||
+t.to===currentUser.email
+){
+
+history.innerHTML += `
+
+<div class="news">
+
+${t.from}
+
+→
+
+${t.to}
+
+<br>
+
+${t.amount} Hungů
+
+<br>
+
+${t.type}
+
+<br>
+
+${t.time}
+
+</div>
+
+`;
+
+}
+
+});
+
+}
+);
+
+}
+
+/* ANIMATION */
+
+function animate(amount){
+
+let d =
+document.createElement("div");
+
+d.className="anim";
+
+d.innerHTML =
+"+"+amount;
+
+animBox.appendChild(d);
+
+setTimeout(()=>{
+d.remove();
+},1000);
+
+}
+
+/* QR */
+
+function startQR(){
+
+alert("Demo QR kamera");
+
+}
+
+/* BLUETOOTH */
+
+async function scanBluetooth(){
+
+if(!navigator.bluetooth){
+
+alert("Bluetooth není podporován");
+
+return;
+}
+
+try{
+
+await navigator.bluetooth.requestDevice({
+acceptAllDevices:true
+});
+
+alert("Bluetooth zařízení nalezeno");
+
+}catch(e){
+
+alert("Bluetooth zrušen");
+
+}
+
+}
+
+/* PROFILE */
+
+async function saveProfile(){
+
+await update(
+ref(db,"users/"+currentUID),
+{
+bio:bio.value,
+status:statusSelect.value,
+avatar:currentUser.avatar
+}
+);
+
+alert("Profil uložen");
+
+}
+
+function changeAvatar(v){
+
+currentUser.avatar=v;
+
+avatar.innerHTML=
+
+`<i class="fa-solid ${v}"></i>`;
+
+}
+
+/* SETTINGS */
+
+function toggleTheme(){
+
+document.body.classList.toggle("light");
+
+}
+
+async function changePassword(){
+
+let newPass =
+newPassword.value;
+
+if(newPass.length<6){
+
+alert("Heslo musí mít 6 znaků");
+
+return;
+}
+
+await updatePassword(
+auth.currentUser,
+newPass
+);
+
+alert("Heslo změněno");
+
+}
+
+/* ADMIN */
+
+async function loadUsers(){
+
+onValue(
+ref(db,"users"),
+(snapshot)=>{
+
+users.innerHTML="";
+
+let data =
+snapshot.val();
+
+if(!data) return;
+
+usersCount.innerHTML =
+Object.keys(data).length;
+
+Object.entries(data).forEach(([uid,u])=>{
+
+users.innerHTML += `
+
+<div class="news">
+
+<b>${u.email}</b>
+
+<br>
+
+Role:
+${u.role}
+
+<br>
+
+Hungy:
+${u.money}
+
+<br>
+
+XP:
+${u.xp}
+
+<br>
+
+Level:
+${u.level}
+
+<br>
+
+${u.banned ? "🚫 BAN" : "✅ Aktivní"}
+
+<br><br>
+
+<button onclick="banUser('${uid}')">
+Ban
+</button>
+
+<button onclick="muteUser('${uid}')">
+Mute
+</button>
+
+<button onclick="verifyUser('${uid}')">
+✓ Ověřit
+</button>
+
+<button onclick="giveMoney('${uid}')">
+Hungy
+</button>
+
+</div>
+
+`;
+
+});
+
+}
+);
+
+}
+
+window.banUser =
+async function(uid){
+
+await update(
+ref(db,"users/"+uid),
+{
+banned:true
+}
+);
+
+};
+
+window.muteUser =
+async function(uid){
+
+await update(
+ref(db,"users/"+uid),
+{
+muted:true
+}
+);
+
+};
+
+window.verifyUser =
+async function(uid){
+
+await update(
+ref(db,"users/"+uid),
+{
+verified:true
+}
+);
+
+};
+
+window.giveMoney =
+async function(uid){
+
+let amount =
+Number(prompt("Kolik Hungů?"));
+
+let snap =
+await get(
+ref(db,"users/"+uid)
+);
+
+let u =
+snap.val();
+
+await update(
+ref(db,"users/"+uid),
+{
+money:
+u.money + amount
+}
+);
+
+};
+
+async function createUserAdmin(){
+
+if(currentUser.role!=="admin") return;
+
+let email =
+newUserEmail.value;
+
+let pass =
+newUserPass.value;
+
+let role =
+newUserRole.value;
+
+try{
+
+let user =
+await createUserWithEmailAndPassword(
+auth,
+email,
+pass
+);
+
+await set(
+ref(db,"users/"+user.user.uid),
+{
+email:email,
+role:role,
+money:1000,
+xp:0,
+level:1,
+avatar:"fa-user",
+bio:"",
+status:"online",
+verified:false,
+banned:false,
+muted:false,
+registered:new Date().toLocaleDateString()
+}
+);
+
+alert("Účet vytvořen");
+
+}catch(e){
+
+alert(e.message);
+
+}
+
+}
+
+/* FLOPIK */
+
+function showFlopik(){
+
+loginPage.classList.add("hidden");
+
+flopikPage.classList.remove("hidden");
+
+let saved =
+JSON.parse(
+localStorage.getItem("mujflopik")
+) || [];
+
+flopikAccounts.innerHTML="";
+
+saved.forEach(acc=>{
+
+flopikAccounts.innerHTML += `
+
+<div class="news">
+
+${acc}
+
+<button
+onclick="quickLogin('${acc}')">
+
+Přihlásit
+
+</button>
+
+</div>
+
+`;
+
+});
+
+}
+
+window.quickLogin =
+async function(email){
+
+loginEmail.value=email;
+
+backLogin();
+
+};
+
+async function flopikLogin(){
+
+let email =
+flopUser.value;
+
+let pass =
+flopPass.value;
+
+try{
+
+await signInWithEmailAndPassword(
+auth,
+email,
+pass
+);
+
+let saved =
+JSON.parse(
+localStorage.getItem("mujflopik")
+) || [];
+
+if(!saved.includes(email)){
+
+saved.push(email);
+
+localStorage.setItem(
+"mujflopik",
+JSON.stringify(saved)
+);
+
+}
+
+}catch(e){
+
+alert("Špatné přihlášení");
+
+}
+
+}
+
+function backLogin(){
+
+flopikPage.classList.add("hidden");
+
+loginPage.classList.remove("hidden");
+
+}
+
+</script>
 
 </body>
 </html>
-
