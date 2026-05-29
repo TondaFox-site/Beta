@@ -4,9 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<title>Unga Bunga Beta verze Firebase</title>
-
-<p>přihlašovaní se ukládá na serveru </p>
+<title>Unga Bunga V2</title>
 
 <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -66,6 +64,11 @@ background:#2563eb;
 color:white;
 font-weight:bold;
 cursor:pointer;
+transition:0.2s;
+}
+
+button:hover{
+transform:scale(1.02);
 }
 
 .hidden{
@@ -96,7 +99,7 @@ background:#cbd5e1;
 }
 
 .chat{
-height:300px;
+height:350px;
 overflow:auto;
 background:#0f172a;
 padding:10px;
@@ -106,9 +109,22 @@ margin-top:10px;
 
 .msg{
 background:#334155;
-padding:10px;
-border-radius:12px;
+padding:15px;
+border-radius:15px;
 margin-top:10px;
+}
+
+.msgText{
+font-size:18px;
+font-weight:bold;
+margin-top:8px;
+word-break:break-word;
+}
+
+.msgInfo{
+font-size:12px;
+opacity:0.7;
+margin-top:5px;
 }
 
 .profile{
@@ -118,7 +134,7 @@ align-items:center;
 }
 
 .avatar{
-font-size:50px;
+font-size:55px;
 }
 
 .qr{
@@ -144,6 +160,17 @@ position:absolute;
 font-size:30px;
 color:#22c55e;
 animation:up 1s forwards;
+}
+
+.userCard{
+background:#334155;
+padding:15px;
+border-radius:15px;
+margin-top:10px;
+}
+
+body.light .userCard{
+background:#cbd5e1;
 }
 
 @keyframes up{
@@ -181,6 +208,9 @@ placeholder="Email">
 <input id="loginPass"
 type="password"
 placeholder="Heslo">
+
+<input id="registerUsername"
+placeholder="Uživatelské jméno">
 
 <button onclick="login()">
 Přihlásit
@@ -272,6 +302,10 @@ Chat
 Profil
 </button>
 
+<button onclick="tab('profilesTab')">
+Profily
+</button>
+
 <button onclick="tab('settingsTab')">
 Nastavení
 </button>
@@ -307,8 +341,7 @@ Počet uživatelů:
 </div>
 
 <div class="news">
-Online chat:
-Firebase Realtime
+Realtime Firebase chat aktivní
 </div>
 
 </div>
@@ -337,7 +370,7 @@ Server
 </select>
 
 <input id="payUser"
-placeholder="Komu email">
+placeholder="Komu uživatelské jméno">
 
 <input id="payAmount"
 type="number"
@@ -389,8 +422,6 @@ Ankety
 
 </div>
 
-<div id="chatSection">
-
 <div class="chat"
 id="chat"></div>
 
@@ -403,14 +434,12 @@ Poslat
 
 </div>
 
-</div>
-
 <!-- PROFILE -->
 
 <div class="card tab hidden"
 id="profileTab">
 
-<h2>Profil</h2>
+<h2>Můj profil</h2>
 
 <select onchange="changeAvatar(this.value)">
 
@@ -451,12 +480,26 @@ Nerušit
 
 </select>
 
+<input id="changeUsername"
+placeholder="Nové uživatelské jméno">
+
 <button onclick="saveProfile()">
 Uložit profil
 </button>
 
 <div class="news"
 id="profileInfo"></div>
+
+</div>
+
+<!-- VEŘEJNÉ PROFILY -->
+
+<div class="card tab hidden"
+id="profilesTab">
+
+<h2>Veřejné profily</h2>
+
+<div id="profilesList"></div>
 
 </div>
 
@@ -493,6 +536,9 @@ placeholder="Email">
 
 <input id="newUserPass"
 placeholder="Heslo">
+
+<input id="newUserName"
+placeholder="Uživatelské jméno">
 
 <select id="newUserRole">
 
@@ -545,51 +591,114 @@ from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
 const firebaseConfig = {
 
-apiKey: "AIzaSyB-kVC8nGY1JEFEV79Yexpg8-etJDXIp68",
+apiKey:"AIzaSyB-kVC8nGY1JEFEV79Yexpg8-etJDXIp68",
 
-authDomain: "muj-flopik.firebaseapp.com",
+authDomain:"muj-flopik.firebaseapp.com",
 
-databaseURL: "https://muj-flopik-default-rtdb.europe-west1.firebasedatabase.app",
+databaseURL:"https://muj-flopik-default-rtdb.europe-west1.firebasedatabase.app",
 
-projectId: "muj-flopik",
+projectId:"muj-flopik",
 
-storageBucket: "muj-flopik.firebasestorage.app",
+storageBucket:"muj-flopik.firebasestorage.app",
 
-messagingSenderId: "198721412738",
+messagingSenderId:"198721412738",
 
-appId: "1:198721412738:web:a3644bda03f4bc682d5e9b",
-
-measurementId: "G-H3M6CCVL5R"
+appId:"1:198721412738:web:a3644bda03f4bc682d5e9b"
 
 };
 
-const app = initializeApp(firebaseConfig);
+const app =
+initializeApp(firebaseConfig);
 
-const db = getDatabase(app);
+const db =
+getDatabase(app);
 
-const auth = getAuth(app);
+const auth =
+getAuth(app);
 
 let currentUser = null;
-
 let currentUID = null;
 
-window.login = login;
-window.register = register;
-window.logout = logout;
-window.tab = tab;
-window.sendChat = sendChat;
-window.pay = pay;
-window.scanBluetooth = scanBluetooth;
-window.startQR = startQR;
-window.changeAvatar = changeAvatar;
-window.saveProfile = saveProfile;
-window.toggleTheme = toggleTheme;
-window.showFlopik = showFlopik;
-window.backLogin = backLogin;
-window.flopikLogin = flopikLogin;
-window.openChat = openChat;
-window.changePassword = changePassword;
-window.createUserAdmin = createUserAdmin;
+window.login=login;
+window.register=register;
+window.logout=logout;
+window.tab=tab;
+window.sendChat=sendChat;
+window.pay=pay;
+window.scanBluetooth=scanBluetooth;
+window.startQR=startQR;
+window.changeAvatar=changeAvatar;
+window.saveProfile=saveProfile;
+window.toggleTheme=toggleTheme;
+window.showFlopik=showFlopik;
+window.backLogin=backLogin;
+window.flopikLogin=flopikLogin;
+window.changePassword=changePassword;
+window.createUserAdmin=createUserAdmin;
+
+/* REGISTER */
+
+async function register(){
+
+let email =
+loginEmail.value;
+
+let pass =
+loginPass.value;
+
+let username =
+registerUsername.value;
+
+let usersSnap =
+await get(ref(db,"users"));
+
+let users =
+usersSnap.val();
+
+let role =
+users ? "user" : "admin";
+
+try{
+
+let user =
+await createUserWithEmailAndPassword(
+auth,
+email,
+pass
+);
+
+await set(
+ref(db,"users/"+user.user.uid),
+{
+email:email,
+username:username,
+role:role,
+money:1000,
+xp:0,
+level:1,
+avatar:"fa-user",
+bio:"",
+status:"online",
+verified:role==="admin",
+banned:false,
+muted:false,
+registered:new Date().toLocaleDateString()
+}
+);
+
+alert(
+role==="admin"
+? "První účet = ADMIN"
+: "Účet vytvořen"
+);
+
+}catch(e){
+
+alert(e.message);
+
+}
+
+}
 
 /* LOGIN */
 
@@ -617,56 +726,10 @@ alert("Špatné přihlášení");
 
 }
 
-/* REGISTER */
+/* AUTH */
 
-async function register(){
-
-let email =
-loginEmail.value;
-
-let pass =
-loginPass.value;
-
-try{
-
-let user =
-await createUserWithEmailAndPassword(
-auth,
-email,
-pass
-);
-
-await set(
-ref(db,"users/"+user.user.uid),
-{
-email:email,
-role:"user",
-money:1000,
-xp:0,
-level:1,
-avatar:"fa-user",
-bio:"",
-status:"online",
-verified:false,
-banned:false,
-muted:false,
-registered:new Date().toLocaleDateString()
-}
-);
-
-alert("Účet vytvořen");
-
-}catch(e){
-
-alert(e.message);
-
-}
-
-}
-
-/* AUTH STATE */
-
-onAuthStateChanged(auth,async(user)=>{
+onAuthStateChanged(auth,
+async(user)=>{
 
 if(!user){
 
@@ -677,14 +740,16 @@ appPage.classList.add("hidden");
 return;
 }
 
-currentUID = user.uid;
+currentUID =
+user.uid;
 
 let snap =
 await get(
 ref(db,"users/"+user.uid)
 );
 
-currentUser = snap.val();
+currentUser =
+snap.val();
 
 openApp();
 
@@ -699,7 +764,7 @@ appPage.classList.remove("hidden");
 
 welcome.innerHTML =
 
-currentUser.email +
+currentUser.username +
 
 (currentUser.verified
 ? ' <span class="badge">✓</span>'
@@ -733,6 +798,9 @@ currentUser.bio || "";
 statusSelect.value =
 currentUser.status || "online";
 
+changeUsername.value =
+currentUser.username || "";
+
 profileInfo.innerHTML =
 
 `
@@ -756,6 +824,8 @@ adminBtn.classList.add("hidden");
 }
 
 loadUsers();
+
+loadProfiles();
 
 loadChat();
 
@@ -789,13 +859,17 @@ document
 
 }
 
-/* CHAT */
+/* CHAT MENU */
 
 function openChat(type){
 
-alert(type);
+alert(
+"Demo sekce: " + type
+);
 
 }
+
+/* SEND CHAT */
 
 async function sendChat(){
 
@@ -813,7 +887,7 @@ return;
 await push(
 ref(db,"chat"),
 {
-user:currentUser.email,
+user:currentUser.username,
 text:chatInput.value,
 time:new Date().toLocaleTimeString(),
 uid:currentUID
@@ -845,25 +919,30 @@ chat.innerHTML += `
 
 <div class="msg">
 
-<b>${msg.user}</b>
-
-<br>
-
+<div class="msgText">
 ${msg.text}
+</div>
 
-<br>
+<div class="msgInfo">
 
-<small>${msg.time}</small>
+${msg.user}
+
+•
+
+${msg.time}
+
+</div>
 
 ${
 currentUser.role==="admin"
 
 ?
 
-`<br>
-<button
+`<button
 onclick="deleteMessage('${id}')">
+
 Smazat
+
 </button>`
 
 :
@@ -897,7 +976,7 @@ ref(db,"chat/"+id)
 
 async function pay(){
 
-let targetEmail =
+let username =
 payUser.value;
 
 let amount =
@@ -917,33 +996,32 @@ alert("Nedostatek Hungů");
 return;
 }
 
-let usersSnap =
+let snap =
 await get(ref(db,"users"));
 
 let users =
-usersSnap.val();
+snap.val();
 
 let targetUID = null;
+let target = null;
 
 Object.entries(users).forEach(([uid,u])=>{
 
-if(u.email===targetEmail){
+if(u.username===username){
 
 targetUID = uid;
+target = u;
 
 }
 
 });
 
-if(!targetUID){
+if(!target){
 
 alert("Uživatel neexistuje");
 
 return;
 }
-
-let target =
-users[targetUID];
 
 await update(
 ref(db,"users/"+currentUID),
@@ -964,8 +1042,8 @@ target.money + amount
 await push(
 ref(db,"transactions"),
 {
-from:currentUser.email,
-to:target.email,
+from:currentUser.username,
+to:target.username,
 amount:amount,
 type:payType.value,
 time:new Date().toLocaleString()
@@ -982,7 +1060,7 @@ qrBox.innerHTML="";
 
 new QRCode(qrBox,{
 text:
-target.email+
+target.username+
 ":"+
 amount,
 width:200,
@@ -1013,8 +1091,8 @@ if(!data) return;
 Object.values(data).forEach(t=>{
 
 if(
-t.from===currentUser.email ||
-t.to===currentUser.email
+t.from===currentUser.username ||
+t.to===currentUser.username
 ){
 
 history.innerHTML += `
@@ -1027,7 +1105,7 @@ ${t.from}
 
 ${t.to}
 
-<br>
+<br><br>
 
 ${t.amount} Hungů
 
@@ -1116,7 +1194,8 @@ ref(db,"users/"+currentUID),
 {
 bio:bio.value,
 status:statusSelect.value,
-avatar:currentUser.avatar
+avatar:currentUser.avatar,
+username:changeUsername.value
 }
 );
 
@@ -1134,6 +1213,76 @@ avatar.innerHTML=
 
 }
 
+/* PUBLIC PROFILES */
+
+function loadProfiles(){
+
+onValue(
+ref(db,"users"),
+(snapshot)=>{
+
+profilesList.innerHTML="";
+
+let data =
+snapshot.val();
+
+if(!data) return;
+
+Object.values(data).forEach(u=>{
+
+profilesList.innerHTML += `
+
+<div class="userCard">
+
+<div style="font-size:40px;">
+
+<i class="fa-solid ${u.avatar}"></i>
+
+</div>
+
+<h3>
+
+${u.username}
+
+${u.verified
+? ' <span class="badge">✓</span>'
+: ''}
+
+</h3>
+
+<div>
+
+${u.bio || "Bez popisu"}
+
+</div>
+
+<br>
+
+<div>
+
+Status:
+${u.status}
+
+</div>
+
+<div>
+
+Registrace:
+${u.registered}
+
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+);
+
+}
+
 /* SETTINGS */
 
 function toggleTheme(){
@@ -1144,19 +1293,19 @@ document.body.classList.toggle("light");
 
 async function changePassword(){
 
-let newPass =
+let pass =
 newPassword.value;
 
-if(newPass.length<6){
+if(pass.length<6){
 
-alert("Heslo musí mít 6 znaků");
+alert("Minimálně 6 znaků");
 
 return;
 }
 
 await updatePassword(
 auth.currentUser,
-newPass
+pass
 );
 
 alert("Heslo změněno");
@@ -1187,9 +1336,9 @@ users.innerHTML += `
 
 <div class="news">
 
-<b>${u.email}</b>
+<b>${u.username}</b>
 
-<br>
+<br><br>
 
 Role:
 ${u.role}
@@ -1209,9 +1358,11 @@ ${u.xp}
 Level:
 ${u.level}
 
-<br>
+<br><br>
 
-${u.banned ? "🚫 BAN" : "✅ Aktivní"}
+${u.banned
+? "🚫 BAN"
+: "✅ Aktivní"}
 
 <br><br>
 
@@ -1228,7 +1379,11 @@ Mute
 </button>
 
 <button onclick="giveMoney('${uid}')">
-Hungy
+Přidat Hungy
+</button>
+
+<button onclick="removeMoney('${uid}')">
+Odebrat Hungy
 </button>
 
 </div>
@@ -1282,7 +1437,7 @@ window.giveMoney =
 async function(uid){
 
 let amount =
-Number(prompt("Kolik Hungů?"));
+Number(prompt("Kolik Hungů přidat?"));
 
 let snap =
 await get(
@@ -1302,15 +1457,47 @@ u.money + amount
 
 };
 
+window.removeMoney =
+async function(uid){
+
+let amount =
+Number(prompt("Kolik Hungů odebrat?"));
+
+let snap =
+await get(
+ref(db,"users/"+uid)
+);
+
+let u =
+snap.val();
+
+await update(
+ref(db,"users/"+uid),
+{
+money:
+Math.max(
+0,
+u.money - amount
+)
+}
+);
+
+};
+
 async function createUserAdmin(){
 
-if(currentUser.role!=="admin") return;
+if(currentUser.role!=="admin"){
+return;
+}
 
 let email =
 newUserEmail.value;
 
 let pass =
 newUserPass.value;
+
+let username =
+newUserName.value;
 
 let role =
 newUserRole.value;
@@ -1328,6 +1515,7 @@ await set(
 ref(db,"users/"+user.user.uid),
 {
 email:email,
+username:username,
 role:role,
 money:1000,
 xp:0,
