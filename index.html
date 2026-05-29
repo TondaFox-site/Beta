@@ -137,15 +137,6 @@ align-items:center;
 font-size:55px;
 }
 
-.qr{
-background:white;
-padding:20px;
-border-radius:20px;
-margin-top:20px;
-display:flex;
-justify-content:center;
-}
-
 .badge{
 display:inline-block;
 padding:5px 10px;
@@ -153,13 +144,6 @@ border-radius:10px;
 background:#ef4444;
 font-size:12px;
 margin-left:5px;
-}
-
-.anim{
-position:absolute;
-font-size:30px;
-color:#22c55e;
-animation:up 1s forwards;
 }
 
 .userCard{
@@ -171,20 +155,6 @@ margin-top:10px;
 
 body.light .userCard{
 background:#cbd5e1;
-}
-
-@keyframes up{
-
-0%{
-opacity:1;
-transform:translateY(0);
-}
-
-100%{
-opacity:0;
-transform:translateY(-50px);
-}
-
 }
 
 </style>
@@ -218,40 +188,6 @@ Přihlásit
 
 <button onclick="register()">
 Registrovat
-</button>
-
-<button onclick="showFlopik()">
-Přihlásit přes Můj Flopík
-</button>
-
-</div>
-
-</div>
-
-<!-- FLOPIK -->
-
-<div id="flopikPage"
-class="hidden">
-
-<div class="card">
-
-<h2>Můj Flopík</h2>
-
-<div id="flopikAccounts"></div>
-
-<input id="flopUser"
-placeholder="Email">
-
-<input id="flopPass"
-type="password"
-placeholder="Heslo">
-
-<button onclick="flopikLogin()">
-Přihlásit
-</button>
-
-<button onclick="backLogin()">
-Zpět
 </button>
 
 </div>
@@ -288,10 +224,6 @@ id="avatar">
 
 <button onclick="tab('dashboard')">
 Dashboard
-</button>
-
-<button onclick="tab('bank')">
-Banka
 </button>
 
 <button onclick="tab('chatTab')">
@@ -333,65 +265,10 @@ id="dashboard">
 
 <h1 id="money"></h1>
 
-<div id="animBox"></div>
-
 <div class="news">
 Počet uživatelů:
 <span id="usersCount"></span>
 </div>
-
-<div class="news">
-Realtime Firebase chat aktivní
-</div>
-
-</div>
-
-<!-- BANK -->
-
-<div class="card tab hidden"
-id="bank">
-
-<h2>Banka</h2>
-
-<select id="payType">
-
-<option value="qr">
-QR platba
-</option>
-
-<option value="bluetooth">
-Bluetooth
-</option>
-
-<option value="server">
-Server
-</option>
-
-</select>
-
-<input id="payUser"
-placeholder="Komu uživatelské jméno">
-
-<input id="payAmount"
-type="number"
-placeholder="Částka">
-
-<button onclick="pay()">
-Zaplatit
-</button>
-
-<button onclick="scanBluetooth()">
-Bluetooth hledání
-</button>
-
-<button onclick="startQR()">
-QR kamera demo
-</button>
-
-<div id="qrBox"
-class="qr hidden"></div>
-
-<div id="history"></div>
 
 </div>
 
@@ -400,27 +277,7 @@ class="qr hidden"></div>
 <div class="card tab hidden"
 id="chatTab">
 
-<h2>Chat</h2>
-
-<div class="menu">
-
-<button onclick="openChat('global')">
-Globální chat
-</button>
-
-<button onclick="openChat('private')">
-Soukromé zprávy
-</button>
-
-<button onclick="openChat('groups')">
-Skupiny
-</button>
-
-<button onclick="openChat('polls')">
-Ankety
-</button>
-
-</div>
+<h2>Globální chat</h2>
 
 <div class="chat"
 id="chat"></div>
@@ -441,44 +298,8 @@ id="profileTab">
 
 <h2>Můj profil</h2>
 
-<select onchange="changeAvatar(this.value)">
-
-<option value="fa-user">
-Uživatel
-</option>
-
-<option value="fa-crown">
-Koruna
-</option>
-
-<option value="fa-rocket">
-Raketa
-</option>
-
-<option value="fa-ghost">
-Duch
-</option>
-
-</select>
-
 <textarea id="bio"
 placeholder="Veřejný popis"></textarea>
-
-<select id="statusSelect">
-
-<option value="online">
-Online
-</option>
-
-<option value="ve škole">
-Ve škole
-</option>
-
-<option value="nerušit">
-Nerušit
-</option>
-
-</select>
 
 <input id="changeUsername"
 placeholder="Nové uživatelské jméno">
@@ -492,7 +313,7 @@ id="profileInfo"></div>
 
 </div>
 
-<!-- VEŘEJNÉ PROFILY -->
+<!-- PUBLIC PROFILES -->
 
 <div class="card tab hidden"
 id="profilesTab">
@@ -522,6 +343,25 @@ placeholder="Nové heslo">
 Změnit heslo
 </button>
 
+<hr>
+
+<h3>Admin kód</h3>
+
+<input id="adminCodeInput"
+placeholder="Zadej admin kód">
+
+<button onclick="useAdminCode()">
+Použít admin kód
+</button>
+
+<hr>
+
+<h3>Smazání účtu</h3>
+
+<button onclick="deleteMyAccount()">
+Smazat účet
+</button>
+
 </div>
 
 <!-- ADMIN -->
@@ -530,31 +370,6 @@ Změnit heslo
 id="adminTab">
 
 <h2>Admin panel</h2>
-
-<input id="newUserEmail"
-placeholder="Email">
-
-<input id="newUserPass"
-placeholder="Heslo">
-
-<input id="newUserName"
-placeholder="Uživatelské jméno">
-
-<select id="newUserRole">
-
-<option value="user">
-User
-</option>
-
-<option value="admin">
-Admin
-</option>
-
-</select>
-
-<button onclick="createUserAdmin()">
-Vytvořit účet
-</button>
 
 <div id="users"></div>
 
@@ -585,7 +400,8 @@ createUserWithEmailAndPassword,
 signInWithEmailAndPassword,
 signOut,
 onAuthStateChanged,
-updatePassword
+updatePassword,
+deleteUser
 }
 from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
@@ -624,17 +440,11 @@ window.register=register;
 window.logout=logout;
 window.tab=tab;
 window.sendChat=sendChat;
-window.pay=pay;
-window.scanBluetooth=scanBluetooth;
-window.startQR=startQR;
-window.changeAvatar=changeAvatar;
 window.saveProfile=saveProfile;
 window.toggleTheme=toggleTheme;
-window.showFlopik=showFlopik;
-window.backLogin=backLogin;
-window.flopikLogin=flopikLogin;
 window.changePassword=changePassword;
-window.createUserAdmin=createUserAdmin;
+window.useAdminCode=useAdminCode;
+window.deleteMyAccount=deleteMyAccount;
 
 /* REGISTER */
 
@@ -648,6 +458,13 @@ loginPass.value;
 
 let username =
 registerUsername.value;
+
+if(username.length < 3){
+
+alert("Jméno musí mít alespoň 3 znaky");
+return;
+
+}
 
 let usersSnap =
 await get(ref(db,"users"));
@@ -676,9 +493,7 @@ role:role,
 money:1000,
 xp:0,
 level:1,
-avatar:"fa-user",
 bio:"",
-status:"online",
 verified:role==="admin",
 banned:false,
 muted:false,
@@ -686,11 +501,7 @@ registered:new Date().toLocaleDateString()
 }
 );
 
-alert(
-role==="admin"
-? "První účet = ADMIN"
-: "Účet vytvořen"
-);
+alert("Účet vytvořen");
 
 }catch(e){
 
@@ -725,9 +536,6 @@ alert("Špatné přihlášení");
 }
 
 }
-
-/* AUTH */
-
 onAuthStateChanged(auth,
 async(user)=>{
 
@@ -738,10 +546,10 @@ loginPage.classList.remove("hidden");
 appPage.classList.add("hidden");
 
 return;
+
 }
 
-currentUID =
-user.uid;
+currentUID = user.uid;
 
 let snap =
 await get(
@@ -751,14 +559,30 @@ ref(db,"users/"+user.uid)
 currentUser =
 snap.val();
 
+if(!currentUser){
+
+await signOut(auth);
+return;
+
+}
+
+if(currentUser.banned){
+
+alert("Tento účet je zabanovaný");
+
+await signOut(auth);
+
+return;
+
+}
+
 openApp();
 
 });
+
 function openApp(){
 
 loginPage.classList.add("hidden");
-
-flopikPage.classList.add("hidden");
 
 appPage.classList.remove("hidden");
 
@@ -780,10 +604,6 @@ currentUser.level +
 " | XP " +
 currentUser.xp;
 
-avatar.innerHTML =
-
-`<i class="fa-solid ${currentUser.avatar}"></i>`;
-
 role.innerHTML =
 
 currentUser.role==="admin"
@@ -795,20 +615,12 @@ currentUser.role==="admin"
 bio.value =
 currentUser.bio || "";
 
-statusSelect.value =
-currentUser.status || "online";
-
 changeUsername.value =
 currentUser.username || "";
 
 profileInfo.innerHTML =
 
 `
-Status:
-${currentUser.status}
-
-<br><br>
-
 Registrace:
 ${currentUser.registered}
 `;
@@ -823,21 +635,9 @@ adminBtn.classList.add("hidden");
 
 }
 
-loadUsers();
-
-loadProfiles();
-
 loadChat();
-
-loadHistory();
-
-}
-
-/* LOGOUT */
-
-async function logout(){
-
-await signOut(auth);
+loadProfiles();
+loadUsers();
 
 }
 
@@ -859,25 +659,15 @@ document
 
 }
 
-/* CHAT MENU */
-
-function openChat(type){
-
-alert(
-"Demo sekce: " + type
-);
-
-}
-
-/* SEND CHAT */
+/* CHAT */
 
 async function sendChat(){
 
 if(currentUser.muted){
 
 alert("Jsi umlčen");
-
 return;
+
 }
 
 if(chatInput.value.trim()===""){
@@ -897,8 +687,6 @@ uid:currentUID
 chatInput.value="";
 
 }
-
-/* LOAD CHAT */
 
 function loadChat(){
 
@@ -961,8 +749,6 @@ Smazat
 
 }
 
-/* DELETE MESSAGE */
-
 window.deleteMessage =
 async function(id){
 
@@ -972,230 +758,56 @@ ref(db,"chat/"+id)
 
 };
 
-/* PAY */
-
-async function pay(){
-
-let username =
-payUser.value;
-
-let amount =
-Number(payAmount.value);
-
-if(amount<=0){
-
-alert("Neplatná částka");
-
-return;
-}
-
-if(currentUser.money < amount){
-
-alert("Nedostatek Hungů");
-
-return;
-}
-
-let snap =
-await get(ref(db,"users"));
-
-let users =
-snap.val();
-
-let targetUID = null;
-let target = null;
-
-Object.entries(users).forEach(([uid,u])=>{
-
-if(u.username===username){
-
-targetUID = uid;
-target = u;
-
-}
-
-});
-
-if(!target){
-
-alert("Uživatel neexistuje");
-
-return;
-}
-
-await update(
-ref(db,"users/"+currentUID),
-{
-money:
-currentUser.money - amount
-}
-);
-
-await update(
-ref(db,"users/"+targetUID),
-{
-money:
-target.money + amount
-}
-);
-
-await push(
-ref(db,"transactions"),
-{
-from:currentUser.username,
-to:target.username,
-amount:amount,
-type:payType.value,
-time:new Date().toLocaleString()
-}
-);
-
-animate(amount);
-
-if(payType.value==="qr"){
-
-qrBox.classList.remove("hidden");
-
-qrBox.innerHTML="";
-
-new QRCode(qrBox,{
-text:
-target.username+
-":"+
-amount,
-width:200,
-height:200
-});
-
-}
-
-alert("Platba odeslána");
-
-}
-
-/* HISTORY */
-
-function loadHistory(){
-
-onValue(
-ref(db,"transactions"),
-(snapshot)=>{
-
-history.innerHTML="";
-
-let data =
-snapshot.val();
-
-if(!data) return;
-
-Object.values(data).forEach(t=>{
-
-if(
-t.from===currentUser.username ||
-t.to===currentUser.username
-){
-
-history.innerHTML += `
-
-<div class="news">
-
-${t.from}
-
-→
-
-${t.to}
-
-<br><br>
-
-${t.amount} Hungů
-
-<br>
-
-${t.type}
-
-<br>
-
-${t.time}
-
-</div>
-
-`;
-
-}
-
-});
-
-}
-);
-
-}
-
-/* ANIMATION */
-
-function animate(amount){
-
-let d =
-document.createElement("div");
-
-d.className="anim";
-
-d.innerHTML =
-"+"+amount;
-
-animBox.appendChild(d);
-
-setTimeout(()=>{
-d.remove();
-},1000);
-
-}
-
-/* QR */
-
-function startQR(){
-
-alert("Demo QR kamera");
-
-}
-
-/* BLUETOOTH */
-
-async function scanBluetooth(){
-
-if(!navigator.bluetooth){
-
-alert("Bluetooth není podporován");
-
-return;
-}
-
-try{
-
-await navigator.bluetooth.requestDevice({
-acceptAllDevices:true
-});
-
-alert("Bluetooth zařízení nalezeno");
-
-}catch(e){
-
-alert("Bluetooth zrušen");
-
-}
-
-}
-
 /* PROFILE */
 
 async function saveProfile(){
+
+let newName =
+changeUsername.value.trim();
+
+if(newName.length < 3){
+
+alert("Jméno musí mít alespoň 3 znaky");
+return;
+
+}
+
+let usersSnap =
+await get(ref(db,"users"));
+
+let users =
+usersSnap.val();
+
+let used = false;
+
+Object.entries(users).forEach(([uid,u])=>{
+
+if(
+uid !== currentUID &&
+u.username &&
+u.username.toLowerCase()
+===
+newName.toLowerCase()
+){
+
+used = true;
+
+}
+
+});
+
+if(used){
+
+alert("Toto jméno už existuje");
+return;
+
+}
 
 await update(
 ref(db,"users/"+currentUID),
 {
 bio:bio.value,
-status:statusSelect.value,
-avatar:currentUser.avatar,
-username:changeUsername.value
+username:newName
 }
 );
 
@@ -1203,17 +815,7 @@ alert("Profil uložen");
 
 }
 
-function changeAvatar(v){
-
-currentUser.avatar=v;
-
-avatar.innerHTML=
-
-`<i class="fa-solid ${v}"></i>`;
-
-}
-
-/* PUBLIC PROFILES */
+/* PROFILES */
 
 function loadProfiles(){
 
@@ -1228,17 +830,14 @@ snapshot.val();
 
 if(!data) return;
 
+usersCount.innerHTML =
+Object.keys(data).length;
+
 Object.values(data).forEach(u=>{
 
 profilesList.innerHTML += `
 
 <div class="userCard">
-
-<div style="font-size:40px;">
-
-<i class="fa-solid ${u.avatar}"></i>
-
-</div>
 
 <h3>
 
@@ -1251,25 +850,14 @@ ${u.verified
 </h3>
 
 <div>
-
 ${u.bio || "Bez popisu"}
-
 </div>
 
 <br>
 
 <div>
-
-Status:
-${u.status}
-
-</div>
-
-<div>
-
 Registrace:
 ${u.registered}
-
 </div>
 
 </div>
@@ -1296,12 +884,14 @@ async function changePassword(){
 let pass =
 newPassword.value;
 
-if(pass.length<6){
+if(pass.length < 6){
 
-alert("Minimálně 6 znaků");
-
+alert("Heslo musí mít alespoň 6 znaků");
 return;
+
 }
+
+try{
 
 await updatePassword(
 auth.currentUser,
@@ -1310,11 +900,119 @@ pass
 
 alert("Heslo změněno");
 
+}catch(e){
+
+alert("Pro změnu hesla se znovu přihlas");
+
 }
 
-/* ADMIN */
+}
 
-async function loadUsers(){
+/* ADMIN CODE */
+
+async function useAdminCode(){
+
+let code =
+adminCodeInput.value.trim();
+
+let codeSnap =
+await get(
+ref(db,"adminCodeUsed")
+);
+
+let used =
+codeSnap.val();
+
+if(used){
+
+alert("Admin kód už byl použit");
+return;
+
+}
+
+if(code !== "adomin12"){
+
+alert("Špatný admin kód");
+return;
+
+}
+
+await update(
+ref(db,"users/"+currentUID),
+{
+role:"admin",
+verified:true
+}
+);
+
+await set(
+ref(db,"adminCodeUsed"),
+true
+);
+
+alert("Nyní jsi ADMIN");
+
+location.reload();
+
+}
+
+/* DELETE ACCOUNT */
+
+async function deleteMyAccount(){
+
+let sure =
+confirm("Opravdu chceš smazat účet?");
+
+if(!sure) return;
+
+try{
+
+await remove(
+ref(db,"users/"+currentUID)
+);
+
+/* SMAZAT CHATY */
+
+let chatSnap =
+await get(ref(db,"chat"));
+
+let chats =
+chatSnap.val();
+
+if(chats){
+
+for(const [id,msg]
+of Object.entries(chats)){
+
+if(msg.uid===currentUID){
+
+await remove(
+ref(db,"chat/"+id)
+);
+
+}
+
+}
+
+}
+
+await deleteUser(auth.currentUser);
+
+alert("Účet byl smazán");
+
+location.reload();
+
+}catch(e){
+
+alert("Pro smazání účtu se znovu přihlas");
+
+}
+
+}
+
+/* ADMIN PANEL */
+
+function loadUsers(){
 
 onValue(
 ref(db,"users"),
@@ -1326,9 +1024,6 @@ let data =
 snapshot.val();
 
 if(!data) return;
-
-usersCount.innerHTML =
-Object.keys(data).length;
 
 Object.entries(data).forEach(([uid,u])=>{
 
@@ -1348,42 +1043,30 @@ ${u.role}
 Hungy:
 ${u.money}
 
-<br>
-
-XP:
-${u.xp}
-
-<br>
-
-Level:
-${u.level}
-
-<br><br>
-
-${u.banned
-? "🚫 BAN"
-: "✅ Aktivní"}
-
 <br><br>
 
 <button onclick="banUser('${uid}')">
 Ban
 </button>
 
+<button onclick="unbanUser('${uid}')">
+Unban
+</button>
+
 <button onclick="muteUser('${uid}')">
 Mute
 </button>
 
-<button onclick="verifyUser('${uid}')">
-✓ Ověřit
+<button onclick="unmuteUser('${uid}')">
+Unmute
 </button>
 
 <button onclick="giveMoney('${uid}')">
-Přidat Hungy
++ Hungy
 </button>
 
 <button onclick="removeMoney('${uid}')">
-Odebrat Hungy
+- Hungy
 </button>
 
 </div>
@@ -1409,6 +1092,18 @@ banned:true
 
 };
 
+window.unbanUser =
+async function(uid){
+
+await update(
+ref(db,"users/"+uid),
+{
+banned:false
+}
+);
+
+};
+
 window.muteUser =
 async function(uid){
 
@@ -1421,13 +1116,13 @@ muted:true
 
 };
 
-window.verifyUser =
+window.unmuteUser =
 async function(uid){
 
 await update(
 ref(db,"users/"+uid),
 {
-verified:true
+muted:false
 }
 );
 
@@ -1451,7 +1146,8 @@ await update(
 ref(db,"users/"+uid),
 {
 money:
-u.money + amount
+(u.money || 0)
++ amount
 }
 );
 
@@ -1477,161 +1173,19 @@ ref(db,"users/"+uid),
 money:
 Math.max(
 0,
-u.money - amount
+(u.money || 0)
+- amount
 )
 }
 );
 
 };
 
-async function createUserAdmin(){
+/* LOGOUT */
 
-if(currentUser.role!=="admin"){
-return;
-}
+async function logout(){
 
-let email =
-newUserEmail.value;
-
-let pass =
-newUserPass.value;
-
-let username =
-newUserName.value;
-
-let role =
-newUserRole.value;
-
-try{
-
-let user =
-await createUserWithEmailAndPassword(
-auth,
-email,
-pass
-);
-
-await set(
-ref(db,"users/"+user.user.uid),
-{
-email:email,
-username:username,
-role:role,
-money:1000,
-xp:0,
-level:1,
-avatar:"fa-user",
-bio:"",
-status:"online",
-verified:false,
-banned:false,
-muted:false,
-registered:new Date().toLocaleDateString()
-}
-);
-
-alert("Účet vytvořen");
-
-}catch(e){
-
-alert(e.message);
-
-}
-
-}
-
-/* FLOPIK */
-
-function showFlopik(){
-
-loginPage.classList.add("hidden");
-
-flopikPage.classList.remove("hidden");
-
-let saved =
-JSON.parse(
-localStorage.getItem("mujflopik")
-) || [];
-
-flopikAccounts.innerHTML="";
-
-saved.forEach(acc=>{
-
-flopikAccounts.innerHTML += `
-
-<div class="news">
-
-${acc}
-
-<button
-onclick="quickLogin('${acc}')">
-
-Přihlásit
-
-</button>
-
-</div>
-
-`;
-
-});
-
-}
-
-window.quickLogin =
-async function(email){
-
-loginEmail.value=email;
-
-backLogin();
-
-};
-
-async function flopikLogin(){
-
-let email =
-flopUser.value;
-
-let pass =
-flopPass.value;
-
-try{
-
-await signInWithEmailAndPassword(
-auth,
-email,
-pass
-);
-
-let saved =
-JSON.parse(
-localStorage.getItem("mujflopik")
-) || [];
-
-if(!saved.includes(email)){
-
-saved.push(email);
-
-localStorage.setItem(
-"mujflopik",
-JSON.stringify(saved)
-);
-
-}
-
-}catch(e){
-
-alert("Špatné přihlášení");
-
-}
-
-}
-
-function backLogin(){
-
-flopikPage.classList.add("hidden");
-
-loginPage.classList.remove("hidden");
+await signOut(auth);
 
 }
 
