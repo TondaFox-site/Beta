@@ -238,6 +238,10 @@ Profil
 Profily
 </button>
 
+<button onclick="tab('bankTab')">
+Banka
+</button>
+
 <button onclick="tab('settingsTab')">
 Nastavení
 </button>
@@ -321,6 +325,58 @@ id="profilesTab">
 <h2>Veřejné profily</h2>
 
 <div id="profilesList"></div>
+
+</div>
+
+<!-- BANKA -->
+
+<div class="card tab hidden"
+id="bankTab">
+
+<h2>Banka</h2>
+
+<div class="news">
+
+Aktuální stav:
+
+<h3 id="bankMoney">
+0 Hungů
+</h3>
+
+</div>
+
+<input
+id="bankUser"
+placeholder="Uživatelské jméno příjemce">
+
+<input
+id="bankAmount"
+type="number"
+placeholder="Počet Hungů">
+
+<button onclick="sendMoney()">
+Poslat Hungy
+</button>
+
+<h3>
+Historie převodů
+</h3>
+
+<div id="bankHistory">
+
+<div class="news">
+Žádné převody
+</div>
+
+</div>
+
+</div>
+<!-- BANKA -->
+
+<div class="card tab hidden"
+id="bankTab">
+
+...
 
 </div>
 
@@ -445,6 +501,7 @@ window.toggleTheme=toggleTheme;
 window.changePassword=changePassword;
 window.useAdminCode=useAdminCode;
 window.deleteMyAccount=deleteMyAccount;
+window.sendMoney=sendMoney;
 
 /* REGISTER */
 
@@ -491,6 +548,7 @@ email:email,
 username:username,
 role:role,
 money:1000,
+bank:0,
 xp:0,
 level:1,
 bio:"",
@@ -638,6 +696,7 @@ adminBtn.classList.add("hidden");
 loadChat();
 loadProfiles();
 loadUsers();
+loadBank();
 
 }
 
@@ -1181,6 +1240,212 @@ Math.max(
 
 };
 
+/* BANKA */
+
+async function sendMoney(){
+
+let targetName =
+bankUser.value.trim();
+
+let amount =
+Number(bankAmount.value);
+
+if(!targetName){
+
+alert("Zadej příjemce");
+return;
+
+}
+
+if(!amount || amount<=0){
+
+alert("Neplatná částka");
+return;
+
+}
+
+let usersSnap =
+await get(ref(db,"users"));
+
+let users =
+usersSnap.val();
+
+let targetUID = null;
+let targetUser = null;
+
+Object.entries(users).forEach(([uid,u])=>{
+
+if(
+u.username &&
+u.username.toLowerCase()
+===
+targetName.toLowerCase()
+){
+
+targetUID = uid;
+targetUser = u;
+
+}
+
+});
+
+if(!targetUID){
+
+alert("Uživatel nenalezen");
+return;
+
+}
+
+if(targetUID===currentUID){
+
+alert("Nemůžeš poslat sám sobě");
+return;
+
+}
+
+if(currentUser.money < amount){
+
+alert("Nemáš dost Hungů");
+return;
+
+}
+
+await update(
+ref(db,"users/"+currentUID),
+{
+money:
+currentUser.money
+-
+amount
+}
+);
+
+await update(
+ref(db,"users/"+targetUID),
+{
+money:
+(targetUser.money||0)
++
+amount
+}
+);
+
+await push(
+ref(db,"transactions"),
+{
+from:
+currentUser.username,
+
+to:
+targetUser.username,
+
+amount:
+amount,
+
+time:
+new Date().toLocaleString()
+}
+);
+
+bankUser.value="";
+bankAmount.value="";
+
+alert("Převod odeslán");
+
+let mySnap =
+await get(
+ref(db,"users/"+currentUID)
+);
+
+currentUser =
+mySnap.val();
+
+money.innerHTML =
+currentUser.money +
+" Hungů";
+
+bankMoney.innerHTML =
+currentUser.money +
+" Hungů";
+
+}
+
+function loadBank(){
+
+bankMoney.innerHTML =
+currentUser.money +
+" Hungů";
+
+onValue(
+ref(db,"transactions"),
+(snapshot)=>{
+
+let data =
+snapshot.val();
+
+bankHistory.innerHTML="";
+
+if(!data){
+
+bankHistory.innerHTML=
+
+'<div class="news">Žádné převody</div>';
+
+return;
+
+}
+
+Object.values(data)
+.reverse()
+.forEach(tx=>{
+
+if(
+tx.from===currentUser.username
+||
+tx.to===currentUser.username
+){
+
+bankHistory.innerHTML +=
+
+`
+
+<div class="news">
+
+<b>
+
+${tx.from}
+
+</b>
+
+→
+
+<b>
+
+${tx.to}
+
+</b>
+
+<br>
+
+${tx.amount}
+ Hungů
+
+<br>
+
+${tx.time}
+
+</div>
+
+`;
+
+}
+
+});
+
+}
+);
+
+}
 /* LOGOUT */
 
 async function logout(){
