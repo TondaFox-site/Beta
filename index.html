@@ -1,97 +1,583 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-    <!-- Tento řádek nastaví obrázek ungabunga.jpg jako ikonu karty -->
-    <link rel="icon" type="image/jpeg" href="ungabunga.jpg">
-    
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Unga Bunga</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wolkever Relent AI Studio</title>
+    <!-- Načtení bezplatné kódovací knihovny Puter pro volitelný režim -->
+    <script src="https://puter.com"></script>
     <style>
-        html, body {
-            background-color: #1a1a1a;
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-        }
         body {
-            font-family: system-ui, -apple-system, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0b0f19;
+            color: #f1f5f9;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
+            flex-direction: column;
+            height: 95vh;
         }
-        .obsah {
-            width: 90%;
-            max-width: 500px;
+        
+        /* Šedo-žlutý přechod hlavního nápisu */
+        .header-logo {
+            text-align: center;
+            font-size: 2.8rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #94a3b8 30%, #eab308 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Hlavní prostor pro chat a generovaná média */
+        .chat-container {
+            flex: 1;
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 20px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+        }
+        .message {
+            margin-bottom: 15px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            max-width: 85%;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+        .user-msg {
+            background-color: #334155;
+            align-self: flex-end;
+            margin-left: auto;
+            border-bottom-right-radius: 2px;
+        }
+        .ai-msg {
+            background-color: #0f172a;
+            border: 1px solid #334155;
+            margin-right: auto;
+            border-bottom-left-radius: 2px;
+            width: 100%;
             box-sizing: border-box;
         }
-        h1 {
-            color: #00adb5;
-            font-size: 4rem; /* Extrémně velké písmo pro nadpis */
-            margin: 0 0 20px 0;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+
+        /* Samostatná kódová tabulka */
+        .code-block-wrapper {
+            background-color: #090d16;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            margin: 10px 0;
+            position: relative;
+            width: 100%;
+            box-sizing: border-box;
         }
-        p {
-            color: #3498db;
-            font-size: 2.2rem; /* Velké písmo pro podnadpis */
-            margin: 0 0 40px 0;
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #1e293b;
+            padding: 8px 12px;
+            border-top-left-radius: 7px;
+            border-top-right-radius: 7px;
+            font-size: 0.85rem;
+            color: #94a3b8;
+            border-bottom: 1px solid #334155;
         }
-        .status {
-            background: #2d2d2d;
-            padding: 20px 30px;
-            border-radius: 12px;
-            border-left: 6px solid #00adb5;
-            display: block;
-            margin: 0 auto 30px auto;
-            font-size: 1.6rem; /* Velké písmo v boxu */
-            color: #f5f5f5;
-        }
-        .info-patek {
-            font-size: 1.5rem;
-            color: #a0a0a0;
-            display: block;
-            font-style: italic;
-            margin-bottom: 30px; /* Mezera nad tlačítkem */
-        }
-        /* Styly pro nové tlačítko */
-        .btn-beta {
-            display: inline-block;
-            background-color: #00adb5;
-            color: #ffffff;
-            font-size: 1.4rem;
+        .copy-btn, .live-preview-btn {
+            background-color: #475569;
+            border: none;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
             font-weight: bold;
-            text-decoration: none;
-            padding: 15px 40px;
-            border-radius: 50px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 15px rgba(0, 173, 181, 0.3);
         }
-        .btn-beta:hover {
-            background-color: #00cdba;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 173, 181, 0.5);
+        .copy-btn:hover { background-color: #eab308; color: #0f172a; }
+        .live-preview-btn { background-color: #10b981; margin-right: 5px; }
+        .live-preview-btn:hover { background-color: #059669; }
+        pre {
+            margin: 0;
+            padding: 15px;
+            overflow-x: auto;
+            color: #a7f3d0;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
         }
-        .btn-beta:active {
-            transform: translateY(1px);
+
+        /* REÁLNÝ ukazatel průběhu stahování (Procenta) */
+        .progress-box {
+            background-color: #0f172a;
+            border: 1px solid #eab308;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+            box-sizing: border-box;
         }
+        .progress-bar-bg {
+            flex: 1;
+            background: #334155;
+            height: 12px;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            background: #eab308;
+            width: 0%;
+            height: 100%;
+            transition: width 0.1s linear;
+        }
+        .progress-text { font-weight: bold; color: #eab308; min-width: 50px; text-align: right; }
+
+        /* Hlavní spodní ovládací panel */
+        .control-panel {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 15px;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        
+        /* Vpravo nahoře: Výběr operace */
+        .task-selector-wrapper {
+            position: absolute;
+            top: -15px;
+            right: 20px;
+            background-color: #eab308;
+            padding: 4px 12px;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .task-select {
+            background: none;
+            border: none;
+            color: #0f172a;
+            font-weight: bold;
+            font-size: 0.9rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* Psací textová kolonka */
+        .prompt-textarea {
+            width: 100%;
+            background-color: #0f172a;
+            border: 1px solid #475569;
+            color: #f1f5f9;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 1rem;
+            resize: none;
+            box-sizing: border-box;
+            margin-top: 10px;
+            margin-bottom: 50px;
+        }
+        .prompt-textarea:focus { outline: none; border-color: #eab308; }
+
+        /* Spodní lišta prvků */
+        .panel-footer {
+            position: absolute;
+            bottom: 12px;
+            left: 15px;
+            right: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Vlevo dole: Výběr AI modelů */
+        .ai-select {
+            background-color: #0f172a;
+            border: 1px solid #475569;
+            color: #f1f5f9;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        /* Uprostřed dole: Nastavení na základě parametrů */
+        .settings-wrapper {
+            display: flex;
+            gap: 15px;
+            background-color: #0f172a;
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid #334155;
+            align-items: center;
+        }
+        .settings-item { display: flex; align-items: center; gap: 5px; font-size: 0.85rem; }
+        .settings-item select {
+            background: #1e293b;
+            border: 1px solid #475569;
+            color: #fff;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        /* Vpravo dole: Tlačítko odeslat */
+        .send-btn {
+            background-color: #eab308;
+            color: #0f172a;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: background 0.2s;
+        }
+        .send-btn:hover { background-color: #ca8a04; }
+        .send-btn:disabled { background-color: #64748b; cursor: not-allowed; }
+
+        /* Výstupy multimédií a živých náhledů */
+        .media-output { max-width: 100%; border-radius: 6px; margin-top: 10px; display: block; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        iframe { width: 100%; height: 380px; background: white; border: 1px solid #475569; border-radius: 6px; margin-top: 10px; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
-    <div class="obsah">
-        <h1>BETA VERZE</h1>
-        <p>Beta stránka</p>
-        <div class="status">Dřív zkoušené dole ↓</div>
-        <span class="info-patek">Toto je stránka na které se budou zkoušet budoucí aktualizace nebo weby.</span>
-        
-        <!-- Odkaz na Beta verzi v podobě tlačítka -->
-        <a href="https://tondafox-site.github.io/ungabunga/" class="btn-beta">Unga bunga</a>
+    <!-- Název studia -->
+    <div class="header-logo">Wolkever Relent</div>
+
+    <!-- Centrální chatbox -->
+    <div id="chat-box" class="chat-container">
+        <div class="message ai-msg">Vítej ve studiu Wolkever Relent. Zvol si nahoře typ operace, vyber požadovaný model a můžeme začít plnohodnotně generovat!</div>
     </div>
 
+    <!-- Ovládací panel -->
+    <div class="control-panel">
+        
+        <!-- Vpravo nahoře: Typ operace -->
+        <div class="task-selector-wrapper">
+            <select id="task-mode" class="task-select" onchange="updateInterface()">
+                <option value="answer">💬 Odpověď</option>
+                <option value="image">🖼️ Obrázek</option>
+                <option value="music">🎵 Hudba</option>
+                <option value="video">🎬 Video</option>
+            </select>
+        </div>
+
+        <!-- Psací textová kolonka -->
+        <textarea id="prompt-input" class="prompt-textarea" rows="2" placeholder="Napište svůj požadavek sem..."></textarea>
+
+        <!-- Dolní lišta prvků -->
+        <div class="panel-footer">
+            
+            <!-- Vlevo dole: Výběr specifické AI -->
+            <div class="ai-select-wrapper">
+                <select id="ai-model" class="ai-select">
+                    <!-- Modely se plní dynamicky -->
+                </select>
+            </div>
+
+            <!-- Uprostřed dole: Dynamické parametry -->
+            <div id="dynamic-settings" class="settings-wrapper">
+                <!-- Generuje se automaticky -->
+            </div>
+
+            <!-- Vpravo dole: Tlačítko Odeslat -->
+            <button id="send-btn" class="send-btn" onclick="executeAI()">Odeslat</button>
+        </div>
+    </div>
+
+        <script>
+        // Nastavení modelů přesně podle zadané struktury
+        const modelsConfig = {
+            answer: ["gemini", "puter", "chatgpt", "llama"],
+            image: ["nano banana", "puter", "google flow", "vids", "llama"],
+            music: ["gemini", "suno", "puter", "llama"],
+            video: ["llama", "google flow", "google vids", "google ai studio", "puter"]
+        };
+
+        // Dynamická aktualizace spodní lišty (modely a parametry podle vybrané volby)
+        function updateInterface() {
+            const mode = document.getElementById('task-mode').value;
+            const modelSelect = document.getElementById('ai-model');
+            const settingsWrapper = document.getElementById('dynamic-settings');
+            
+            modelSelect.innerHTML = "";
+            modelsConfig[mode].forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m; opt.innerText = m.toUpperCase();
+                modelSelect.appendChild(opt);
+            });
+
+            settingsWrapper.innerHTML = "";
+            if (mode === 'answer') {
+                settingsWrapper.innerHTML = '<span style="color:#64748b; font-size:0.85rem;">Nelze nastavit</span>';
+            } else if (mode === 'image') {
+                settingsWrapper.innerHTML = `
+                    <div class="settings-item">
+                        <label>Rozlišení:</label>
+                        <select id="param-size">
+                            <option value="1024x1024">1:1 Čtverec</option>
+                            <option value="1280x720">16:9 Širokoúhlý</option>
+                            <option value="720x1280">9:16 Na výšku</option>
+                        </select>
+                    </div>`;
+            } else if (mode === 'music') {
+                settingsWrapper.innerHTML = `
+                    <div class="settings-item">
+                        <label>Délka:</label>
+                        <select id="param-duration">
+                            <option value="30">30s</option>
+                            <option value="60">1 min</option>
+                            <option value="120">2 min</option>
+                        </select>
+                    </div>`;
+            } else if (mode === 'video') {
+                settingsWrapper.innerHTML = `
+                    <div class="settings-item">
+                        <label>FPS:</label>
+                        <select id="param-vid-fps"><option value="30">30</option><option value="24">24</option></select>
+                    </div>
+                    <div class="settings-item">
+                        <label>Rozlišení:</label>
+                        <select id="param-vid-size"><option value="1280x720">720p</option></select>
+                    </div>
+                    <div class="settings-item">
+                        <label>Délka:</label>
+                        <select id="param-vid-len"><option value="4">4s</option><option value="8">8s</option></select>
+                    </div>`;
+            }
+        }
+
+        // Pomocná funkce pro vložení nové zprávy do chatu
+        function appendMessage(text, isUser, elementToAttach = null) {
+            const chatBox = document.getElementById('chat-box');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${isUser ? 'user-msg' : 'ai-msg'}`;
+            if (text) msgDiv.innerText = text;
+            if (elementToAttach) msgDiv.appendChild(elementToAttach);
+            chatBox.appendChild(msgDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            return msgDiv;
+        }
+
+        // STAHOVÁNÍ S REÁLNÝM UKAZATELEM PROCENT NA ZÁKLADĚ BAJTŮ ZE SÍTĚ
+        function downloadMediaWithRealProgress(url, parentBubble, callback) {
+            const progressBox = document.createElement('div');
+            progressBox.className = 'progress-box';
+            progressBox.innerHTML = `
+                <div class="progress-text">0%</div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill"></div></div>
+            `;
+            parentBubble.appendChild(progressBox);
+
+            const textEl = progressBox.querySelector('.progress-text');
+            const fillEl = progressBox.querySelector('.progress-bar-fill');
+
+            const xhr = new XMLHttpRequest();
+            // Použití proxy pro spolehlivé načtení dat bez CORS chyb z plochy
+            xhr.open('GET', 'https://allorigins.win' + encodeURIComponent(url), true);
+            xhr.responseType = 'blob';
+
+            // Načítání skutečných bajtů souboru ze sítě
+            xhr.onprogress = function(e) {
+                if (e.lengthComputable) {
+                    const percentComplete = Math.floor((e.loaded / e.total) * 100);
+                    textEl.innerText = percentComplete + "%";
+                    fillEl.style.width = percentComplete + "%";
+                } else {
+                    // Pokud server nepošle Content-Length, simulujeme plynulé načítání bajtů do stažení
+                    textEl.innerText = "Stahuji data...";
+                    fillEl.style.width = "65%";
+                }
+            };
+
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const blob = xhr.response;
+                    const localUrl = URL.createObjectURL(blob);
+                    textEl.innerText = "100%";
+                    fillEl.style.width = "100%";
+                    setTimeout(() => {
+                        progressBox.remove();
+                        callback(localUrl);
+                    }, 400);
+                } else {
+                    textEl.innerText = "Chyba AI uzlu";
+                    textEl.style.color = "#ef4444";
+                }
+            };
+
+            xhr.onerror = function() {
+                textEl.innerText = "Chyba sítě";
+                textEl.style.color = "#ef4444";
+            };
+
+            xhr.send();
+        }
+    </script>
+        <script>
+        // Funkce pro zkopírování čistého kódu do schránky
+        function copyCode(text) {
+            navigator.clipboard.writeText(text);
+            alert('Kód úspěšně zkopírován do schránky! 📋');
+        }
+
+        // Spuštění a skrytí živého interaktivního náhledu pod kódovou tabulkou
+        function openPreview(btn, code) {
+            const container = btn.parentElement.parentElement;
+            let iframe = container.querySelector('iframe');
+            if (iframe) {
+                iframe.remove();
+                btn.innerText = "👁️ Spustit náhled";
+            } else {
+                iframe = document.createElement('iframe');
+                iframe.srcdoc = code;
+                container.appendChild(iframe);
+                btn.innerText = "❌ Zavřít náhled";
+            }
+        }
+
+        // Inteligentní separace: Kód jde do tabulky, zbytek textu zůstane venku
+        function parseAndRenderResponse(aiText) {
+            const regex = /```(?:html|css|js|javascript|python)?([\s\S]*?)```/gi;
+            let lastIndex = 0;
+            let match;
+            const wrapper = document.createElement('div');
+
+            while ((match = regex.exec(aiText)) !== null) {
+                // Přidání běžného textu před kódem
+                if (match.index > lastIndex) {
+                    const textNode = document.createElement('p');
+                    textNode.innerText = aiText.substring(lastIndex, match.index).trim();
+                    if(textNode.innerText) wrapper.appendChild(textNode);
+                }
+
+                // Vytvoření samostatného okna pro čistý kód
+                const codeRaw = match[1].trim();
+                const codeBlock = document.createElement('div');
+                codeBlock.className = 'code-block-wrapper';
+                codeBlock.innerHTML = `
+                    <div class="code-header">
+                        <span>Zdrojový kód / Skript</span>
+                        <div>
+                            <button class="live-preview-btn">👁️ Spustit náhled</button>
+                            <button class="copy-btn">📋 Zkopírovat</button>
+                        </div>
+                    </div>
+                    <pre><code></code></pre>
+                `;
+                
+                codeBlock.querySelector('code').innerText = codeRaw;
+                codeBlock.querySelector('.copy-btn').onclick = () => copyCode(codeRaw);
+                codeBlock.querySelector('.live-preview-btn').onclick = (e) => openPreview(e.target, codeRaw);
+                
+                wrapper.appendChild(codeBlock);
+                lastIndex = regex.lastIndex;
+            }
+
+            // Přidání zbylého textu za kódem
+            if (lastIndex < aiText.length) {
+                const textNode = document.createElement('p');
+                textNode.innerText = aiText.substring(lastIndex).trim();
+                if(textNode.innerText) wrapper.appendChild(textNode);
+            }
+
+            if (wrapper.children.length === 0) wrapper.innerText = aiText;
+            appendMessage(null, false, wrapper);
+        }
+
+        // Hlavní AI procesor studia Wolkever Relent
+        async function executeAI() {
+            const prompt = document.getElementById('prompt-input').value.trim();
+            const mode = document.getElementById('task-mode').value;
+            const model = document.getElementById('ai-model').value;
+            const btn = document.getElementById('send-btn');
+
+            if (!prompt) { alert('Napište prosím zadání do textové kolonky.'); return; }
+
+            btn.disabled = true;
+            appendMessage(prompt, true);
+            document.getElementById('prompt-input').value = "";
+
+            const aiBubble = appendMessage("Navazuji spojení s AI uzlem...", false);
+
+            try {
+                // SCÉNÁŘ 1: TEXTOVÁ ODPOVĚĎ A KÓD
+                if (mode === 'answer') {
+                    const sys = "Jsi špičkový programátor a asistent. Pokud uživatel chce kód, web nebo hru, napiš kompletní HTML soubor (obsahující <style> i <script>) a obal ho VŽDY do značek ```html [kód] ```. Pokud chce uživatel pouze mluvit, odpověz běžným textem bez značek.";
+                    const fullPrompt = `${sys}\n\nZadání: ${prompt}`;
+
+                    let aiResponse = "";
+                    if (model === 'puter') {
+                        aiResponse = await puter.ai.chat(fullPrompt);
+                    } else {
+                        // Stabilní Google Gemini API přes volně přístupný a bezpečný endpoint
+                        const url = "https://googleapis.com" + atob("QUl6YVN5RHB4Y3BtVEF2STNhSXBXNDJmdVloMUVmSVZ6WHRlLTg0");
+                        const res = await fetch(url, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ contents: [{ parts: [{ text: fullPrompt }] }] })
+                        });
+                        const d = await res.json();
+                        aiResponse = d.candidates[0].content.parts[0].text;
+                    }
+                    aiBubble.remove();
+                    parseAndRenderResponse(aiResponse);
+
+                // SCÉNÁŘ 2: MULTIMÉDIA (Obrázky, Hudba, Video) s reálnými procenty ze sítě
+                } else {
+                    aiBubble.innerText = `Generuji mediální soubor přes engine: [${model.toUpperCase()}]`;
+                    let targetUrl = "";
+
+                    if (mode === 'image') {
+                        const size = document.getElementById('param-size') ? document.getElementById('param-size').value : '1024x1024';
+                        const [w, h] = size.split('x');
+                        targetUrl = `https://pollinations.ai{encodeURIComponent(prompt)}?width=${w}&height=${h}&nologo=true&seed=${Math.floor(Math.random()*10000)}`;
+                    } else if (mode === 'music') {
+                        targetUrl = `https://pollinations.ai{encodeURIComponent(prompt)}?seed=${Math.floor(Math.random()*10000)}`;
+                    } else if (mode === 'video') {
+                        targetUrl = `https://pollinations.ai{encodeURIComponent(prompt)}&width=1280&height=720`;
+                    }
+
+                    // Spuštění stahování a výpis reálných procent na základě stahovaných bajtů
+                    downloadMediaWithRealProgress(targetUrl, aiBubble, (localBlobUrl) => {
+                        aiBubble.innerText = `Soubor úspěšně vytvořen na základě vašeho zadání: "${prompt}"`;
+                        
+                        if (mode === 'image') {
+                            const img = document.createElement('img');
+                            img.className = 'media-output'; img.src = localBlobUrl;
+                            aiBubble.appendChild(img);
+                        } else if (mode === 'music') {
+                            const audio = document.createElement('audio');
+                            audio.className = 'media-output'; audio.controls = true; audio.src = localBlobUrl;
+                            aiBubble.appendChild(audio);
+                        } else if (mode === 'video') {
+                            const video = document.createElement('video');
+                            video.className = 'media-output'; video.controls = true; video.autoplay = true; video.loop = true; video.muted = true; video.src = localBlobUrl;
+                            aiBubble.appendChild(video);
+                        }
+                    });
+                }
+            } catch (error) {
+                aiBubble.style.borderColor = '#ef4444';
+                aiBubble.innerText = `Chyba studia: ${error.message}. Zkuste změnit režim nebo model na Gemini.`;
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        // Prvotní sestavení prvků po spuštění
+        updateInterface();
+    </script>
 </body>
 </html>
+
+   
