@@ -3,64 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FoxOS Desktop</title>
+    <title>FoxBrowser</title>
     <style>
         :root {
             --fox-orange: #ff6000;
-            --fox-dark: #121214;
-            --fox-bar: #1e1e24;
+            --bg-dark: #121214;
+            --bar-bg: #1e1e24;
+            --input-bg: #2a2a32;
+            --text-main: #f1f1f5;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
-        body { background: var(--fox-dark); color: #fff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+        body { background: var(--bg-dark); color: var(--text-main); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* Systémová lišta */
-        .taskbar {
-            height: 40px; background: var(--fox-bar); display: flex;
-            align-items: center; padding: 0 12px; gap: 10px; border-bottom: 1px solid #333;
-        }
-        
-        .sys-btn {
-            background: var(--fox-orange); color: #fff; border: none;
-            padding: 5px 12px; border-radius: 4px; font-weight: bold; cursor: pointer;
+        /* Lišta prohlížeče */
+        .browser-bar {
+            height: 48px; background: var(--bar-bg); display: flex;
+            align-items: center; padding: 0 12px; gap: 8px; border-bottom: 1px solid #2a2a32;
         }
 
-        .status-text { font-size: 12px; color: #aaa; margin-left: auto; }
+        .btn {
+            background: transparent; border: none; color: var(--text-main);
+            width: 32px; height: 32px; border-radius: 6px; cursor: pointer; font-size: 16px;
+        }
+        .btn:hover { background: #2a2a32; }
 
-        /* Okno prohlížeče */
-        .window { flex: 1; display: flex; flex-direction: column; background: #000; }
-        .address-bar { display: flex; background: #222; padding: 6px; gap: 6px; }
-        .address-bar input { flex: 1; background: #111; border: 1px solid #444; color: #fff; padding: 6px; border-radius: 4px; }
-        
-        iframe { flex: 1; border: none; background: #fff; }
+        .address-container {
+            flex: 1; display: flex; align-items: center;
+            background: var(--input-bg); border-radius: 6px; padding: 0 10px; height: 34px;
+        }
+
+        .address-bar {
+            width: 100%; background: transparent; border: none; outline: none;
+            color: var(--text-main); font-size: 13px;
+        }
+
+        /* Výstupní okno */
+        .viewport { flex: 1; position: relative; background: #fff; }
+        iframe { width: 100%; height: 100%; border: none; }
+
+        /* Loader */
+        #loader {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(18, 18, 20, 0.9); color: var(--fox-orange);
+            display: none; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 18px; z-index: 10;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Horní systémová lišta FoxOS -->
-    <div class="taskbar">
-        <button class="sys-btn" onclick="FoxOS.openApp('FoxBrowser', 'https://bing.com')">FoxBrowser</button>
-        <span class="status-text" id="fox-status">FoxOS Běží (GitHub Moduly)</span>
-    </div>
-
-    <!-- Okno s aplikací -->
-    <div class="window">
-        <div class="address-bar">
-            <input type="text" id="urlInput" placeholder="Zadejte adresu nebo spusťte modul přes skript..." value="https://bing.com">
-            <button class="sys-btn" onclick="loadSite()">Načíst</button>
+    <div class="browser-bar">
+        <button class="btn" id="reloadBtn" title="Obnovit">&#128472;</button>
+        <div class="address-container">
+            <input type="text" class="address-bar" id="urlInput" placeholder="Napište web (např. seznam.cz nebo google.com) a stiskněte Enter...">
         </div>
-        <iframe id="foxbrowser-frame" src="about:blank"></iframe>
     </div>
 
-    <!-- NAČTENÍ VAŠICH SAMOSTATNÝCH SOUBORŮ Z GITHUB REPOZITÁŘE -->
-    <script src="jjjjjjjjsemnastvany.js"></script>
+    <div class="viewport">
+        <div id="loader">Načítám stránku přes FoxEngine...</div>
+        <iframe id="webFrame"></iframe>
+    </div>
 
-    <script>
-        function loadSite() {
-            const url = document.getElementById('urlInput').value;
-            // Spuštění přes skriptové jádro z jjjjjjjjsemnastvany.js
-            FoxOS.openApp('Web', url);
-        }
-    </script>
+    <!-- Načtení externího skriptu -->
+    <script src="foxbrowser.js"></script>
 </body>
 </html>
