@@ -1,0 +1,39 @@
+{
+  "name": "fox-windows-app",
+  "version": "1.0.0",
+  "description": "Plnohodnotna Windows desktop aplikace postavena na HTML/CSS/JS.",
+  "main": "src/main.js",
+  "author": "Fox",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win nsis portable",
+    "dist:setup": "electron-builder --win nsis",
+    "dist:portable": "electron-builder --win portable"
+  },
+  "devDependencies": {
+    "electron": "^38.0.0",
+    "electron-builder": "^26.0.0"
+  },
+  "build": {
+    "appId": "cz.fox.windowsapp",
+    "productName": "Fox Windows App",
+    "copyright": "Copyright © 2026 Fox",
+    "directories": { "output": "release" },
+    "files": ["src/**/*", "package.json", "assets/**/*"],
+    "asar": true,
+    "win": {
+      "target": ["nsis", "portable"],
+      "artifactName": "Fox-Windows-App-Setup-${version}.${ext}",
+      "icon": "assets/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Fox Windows App",
+      "deleteAppDataOnUninstall": false
+    }
+  }
+}

@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self';">
+  <title>Fox Windows App</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="logo">🦊</div><div><b>Fox</b><span>Windows App</span></div></div>
+      <nav id="nav">
+        <button class="nav-item active" data-page="home">⌂ <span>Domů</span></button>
+        <button class="nav-item" data-page="notes">▤ <span>Poznámky</span></button>
+        <button class="nav-item" data-page="settings">⚙ <span>Nastavení</span></button>
+        <button class="nav-item" data-page="about">ⓘ <span>O aplikaci</span></button>
+      </nav>
+      <div class="side-footer">Windows desktop<br><span>HTML • CSS • JS</span></div>
+    </aside>
+
+    <main class="content">
+      <header class="topbar">
+        <div id="breadcrumbs">Domů</div>
+        <div class="top-actions"><span class="status-dot"></span><span>Online</span><button id="themeBtn" title="Přepnout motiv">◐</button></div>
+      </header>
+
+      <section id="page-home" class="page active-page">
+        <div class="hero">
+          <div><p class="eyebrow">DESKTOP EXPERIENCE</p><h1>Vítej ve Fox Windows App.</h1><p>Skutečná desktopová aplikace s HTML rozhraním, lokálním ukládáním a Windows instalátorem.</p></div>
+          <div class="hero-icon">🦊</div>
+        </div>
+        <div class="cards">
+          <article class="card"><span class="card-icon">⚡</span><h3>Rychlé</h3><p>Aplikace běží lokálně jako samostatný proces, ne jako karta v prohlížeči.</p></article>
+          <article class="card"><span class="card-icon">💾</span><h3>Lokální data</h3><p>Poznámky se ukládají přímo do zařízení přes localStorage.</p></article>
+          <article class="card"><span class="card-icon">🪟</span><h3>Windows</h3><p>Připraveno pro `.exe` instalátor, Start menu i zástupce na ploše.</p></article>
+        </div>
+        <div class="panel"><div><h2>Stav aplikace</h2><p id="runtimeInfo">Načítám informace…</p></div><button class="primary" id="newNoteBtn">+ Nová poznámka</button></div>
+      </section>
+
+      <section id="page-notes" class="page">
+        <div class="section-head"><div><p class="eyebrow">LOKÁLNÍ ÚLOŽIŠTĚ</p><h1>Poznámky</h1></div><button class="primary" id="addNote">+ Přidat</button></div>
+        <div id="notesGrid" class="notes-grid"></div>
+        <div id="emptyState" class="empty">Zatím tu nic není. Přidej první poznámku.</div>
+      </section>
+
+      <section id="page-settings" class="page">
+        <div class="section-head"><div><p class="eyebrow">PŘIZPŮSOBENÍ</p><h1>Nastavení</h1></div></div>
+        <div class="settings-panel">
+          <label>Motiv<select id="themeSelect"><option value="dark">Tmavý</option><option value="light">Světlý</option><option value="system">Podle Windows</option></select></label>
+          <label>Vlastní jméno aplikace<input id="displayName" placeholder="Fox Windows App"></label>
+          <div class="setting-row"><div><b>Zvuky rozhraní</b><small>Zapnout drobné kliknutí a potvrzení.</small></div><input id="sounds" type="checkbox" checked></div>
+          <button class="primary" id="saveSettings">Uložit nastavení</button>
+        </div>
+      </section>
+
+      <section id="page-about" class="page">
+        <div class="about"><div class="big-logo">🦊</div><h1>Fox Windows App</h1><p>Desktopový základ, který může dál růst do skutečného Windows programu.</p><div class="about-box" id="aboutInfo"></div></div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="noteDialog"><form method="dialog" id="noteForm"><h2>Nová poznámka</h2><input id="noteTitle" required maxlength="80" placeholder="Název"><textarea id="noteText" maxlength="1000" placeholder="Text poznámky…"></textarea><div class="dialog-actions"><button value="cancel" class="secondary">Zrušit</button><button value="default" class="primary">Uložit</button></div></form></dialog>
+  <div id="toast" class="toast"></div>
+  <script src="renderer.js"></script>
+</body>
+</html>
